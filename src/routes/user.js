@@ -32,13 +32,19 @@ userRouter.post(
       const { username, password } = req.body;
       const user = await db.User.findOne({ where: { username } });
       if (!user) {
-        return next(apiError.badRequest("Такой пользователь не найден"));
+        return next(
+          apiError.badRequest({
+            errors: [{ msg: "Такой пользователь не найден" }],
+          })
+        );
       }
 
       let comparePassword = bcrypt.compareSync(password, user.password);
       if (!comparePassword) {
         return next(
-          apiError.badRequest("Неверное имя пользователя или пароль")
+          apiError.badRequest({
+            errors: [{ msg: "Неверное имя пользователя или пароль" }],
+          })
         );
       }
 
@@ -78,7 +84,9 @@ userRouter.post(
 
       if (candidate) {
         return next(
-          apiError.badRequest("Пользователь с таким именем уже существует!")
+          apiError.badRequest({
+            errors: [{ msg: "Пользователь с таким именем уже существует!" }],
+          })
         );
       }
 
